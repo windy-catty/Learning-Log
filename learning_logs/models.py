@@ -5,6 +5,7 @@ class Topic(models.Model):
     """用户学习的主题"""
     text = models.CharField(max_length=300)
     date_added = models.DateTimeField(auto_now_add=True)
+    public = models.BooleanField(default=False)
     owner = models.ForeignKey(User,on_delete=models.CASCADE)
     
     def __str__(self):

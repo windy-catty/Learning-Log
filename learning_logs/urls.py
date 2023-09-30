@@ -13,6 +13,9 @@ urlpatterns = [
     #显示所有的主题
     re_path(r'^topics/$',views.topics,name='topics'),
     
+    #显示所有的公开主题
+    re_path(r'^public_topics/$',views.topics,name='public_topics'),
+    
     #特定主题的详细页面
     re_path(r'^topics/(?P<topic_id>\d+)/$',views.topic,name='topic'),
     

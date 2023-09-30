@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponseRedirect,Http404
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
@@ -16,14 +16,28 @@ def topics(request):
     topics = Topic.objects.filter(owner=request.user).order_by('date_added')
     context = {'topics': topics}
     return render(request, 'learning_logs/topics.html', context)
+    
+def public_topics(request):
+    """显示所有的公开主题"""
+    topics = Topic.objects.filter(owner=request.user).order_by('date_added')
+    
+    if request.method == 'POST':
+        for topic in topics[:]:
+            if topic.public == False:
+                topics.remove(topic)
+        return HttpResponseRedirect(reverse('learning_logs:public_topics'))
+    
+    context = {'topics': topics}
+    return render(request, 'learning_logs/public_topics.html',context)
 
 @login_required
 def topic(request,topic_id):
     """显示单个主题及其所有的条目"""
-    topic = Topic.objects.get(id=topic_id)
+    topic = get_object_or_404(Topic, id=topic_id)
     # 确认请求的主题属于当前用户
-    if topic.owner != request.user:
-        raise Http404
+    if topic.public == False:
+        if topic.owner != request.user:
+            raise Http404
     
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic,'entries':entries}
@@ -50,7 +64,7 @@ def new_topic(request):
 @login_required
 def delete_topic(request,topic_id):
     """删除既有主题"""
-    topic = Topic.objects.get(id=topic_id)
+    topic = get_object_or_404(Topic, id=topic_id)
     # 确认请求的主题属于当前用户
     if topic.owner != request.user:
         raise Http404
@@ -63,7 +77,7 @@ def delete_topic(request,topic_id):
 @login_required
 def new_entry(request,topic_id):
     """在特定的主题中添加新条目"""
-    topic = Topic.objects.get(id=topic_id)
+    topic = get_object_or_404(Topic, id=topic_id)
     # 确认请求的主题属于当前用户
     if topic.owner != request.user:
         raise Http404
@@ -87,7 +101,7 @@ def new_entry(request,topic_id):
 @login_required
 def edit_entry(request,entry_id):
     """编辑既有条目"""
-    entry = Entry.objects.get(id=entry_id)
+    entry = get_object_or_404(Entry, id=entry_id)
     topic = entry.topic
     # 确认请求的主题属于当前用户
     if topic.owner != request.user:

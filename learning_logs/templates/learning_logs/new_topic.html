@@ -13,6 +13,10 @@
     {% csrf_token %}
     {% bootstrap_form form %}
     
+    <div class="checkbox-row">
+      <label class="vCheckboxLabel" for="id_public">public or not?</label>
+    </div>
+    
     {% buttons %}
       <button name="submit" class="btn btn-primary">add topic</button>
     {% endbuttons %}
