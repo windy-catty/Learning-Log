@@ -19,14 +19,7 @@ def topics(request):
     
 def public_topics(request):
     """显示所有的公开主题"""
-    topics = Topic.objects.filter(owner=request.user).order_by('date_added')
-    
-    if request.method == 'POST':
-        for topic in topics[:]:
-            if topic.public == False:
-                topics.remove(topic)
-        return HttpResponseRedirect(reverse('learning_logs:public_topics'))
-    
+    topics = Topic.objects.filter(public=True).order_by('date_added')
     context = {'topics': topics}
     return render(request, 'learning_logs/public_topics.html',context)
 
@@ -42,6 +35,24 @@ def topic(request,topic_id):
     entries = topic.entry_set.order_by('-date_added')
     context = {'topic': topic,'entries':entries}
     return render(request, 'learning_logs/topic.html', context)
+
+@login_required
+def public_topic(request,topic_id):
+    """修改既有主题的公开状态"""
+    topic = get_object_or_404(Topic, id=topic_id)
+    # 确认请求的主题属于当前用户
+    if topic.owner != request.user:
+        raise Http404
+    
+    if request.method == 'POST':
+        if topic.public == True:
+            topic.public = False
+        elif topic.public == False:
+            topic.public = True
+        topic.save()
+        return HttpResponseRedirect(reverse('learning_logs:topics'))
+        
+    return render(request, 'learning_logs/public_topic.html',{'topic':topic})
 
 @login_required
 def new_topic(request):
@@ -72,6 +83,7 @@ def delete_topic(request,topic_id):
     if request.method == 'POST':
         topic.delete()
         return HttpResponseRedirect(reverse('learning_logs:topics'))
+        
     return render(request, 'learning_logs/delete_topic.html',{'topic':topic})
 
 @login_required

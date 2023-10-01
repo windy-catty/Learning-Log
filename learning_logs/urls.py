@@ -14,7 +14,7 @@ urlpatterns = [
     re_path(r'^topics/$',views.topics,name='topics'),
     
     #显示所有的公开主题
-    re_path(r'^public_topics/$',views.topics,name='public_topics'),
+    re_path(r'^public_topics/$',views.public_topics,name='public_topics'),
     
     #特定主题的详细页面
     re_path(r'^topics/(?P<topic_id>\d+)/$',views.topic,name='topic'),
@@ -24,6 +24,9 @@ urlpatterns = [
     
     #用于删除新主题的网页
     re_path(r'^delete_topics/(?P<topic_id>\d+)/$',views.delete_topic,name='delete_topic'),
+    
+    #用于修改既有主题的公开状态的网页
+    re_path(r'^public_topic/(?P<topic_id>\d+)/$',views.public_topic,name='public_topic'),
     
     #用于添加新条目的页面
     re_path(r'^new_entry/(?P<topic_id>\d+)/$',views.new_entry,name='new_entry'),
