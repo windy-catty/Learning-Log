@@ -1,0 +1,21 @@
+{% extends "D:/桌面/web_application/一、Django入门/learning_log/learning_logs/templates/learning_logs/base.html" %}
+{% load bootstrap3 %}
+
+{% block header %}
+  <h2>Delete "{{ topic }}":</h2>
+  <h3>Are you sure to delete this old topic ?</h3>
+{% endblock header %}
+
+{% block content %}
+
+  <form method = 'post' class="form">
+    {% csrf_token %}
+    {% buttons %}
+      <button name="submit" class="btn btn-primary">Confirm Delete</button>
+    {% endbuttons %}
+    <p>
+      <a href = "{% url 'learning_logs:topics' %}">Cancel</a>
+    </p>
+  </form>
+  
+{% endblock content %}
