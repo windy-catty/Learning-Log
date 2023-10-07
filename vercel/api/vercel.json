@@ -1,0 +1,7 @@
+{
+    "functions": {
+        "api/my_function": {
+            "handler": "api/myfunction.my_function"
+        }
+    }
+}
